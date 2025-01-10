@@ -18,7 +18,7 @@ Este projeto é um script para Google Sheets que permite gerenciar tarefas (dema
 
 ## Como Usar
 
-1. **Abra a planilha:** [Link para a sua planilha do Google Sheets, com permissões de visualização para "Qualquer pessoa com o link"].
+1. **Abra a planilha:** [[Link para a sua planilha do Google Sheets, com permissões de visualização para "Qualquer pessoa com o link"](https://docs.google.com/spreadsheets/d/1JZYJUy4JI2ZmNA5Kr9kRdRtSBkdgar9ajFJRNfH-UHM/edit?usp=sharing)].
 2. **Faça uma cópia:** Vá em "Arquivo" > "Fazer uma cópia" para salvar uma cópia editável da planilha na sua conta do Google Drive.
 3. **Abra o editor de scripts:** Vá em "Extensões" > "Apps Script".
 4. **Execute a função `onOpen()`:** Isso criará o menu personalizado "Agenda" (se ainda não existir).
