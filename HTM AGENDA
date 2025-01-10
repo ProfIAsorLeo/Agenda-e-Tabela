@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <style>
+    .form-row { margin-bottom: 10px; }
+    .hidden { display: none; } /* Classe para ocultar a mensagem */
+    #message { color: green; } /* Estilo padrão para mensagem de sucesso */
+  </style>
+</head>
+<body>
+  <div class="form-row">
+    <label for="prioridade">Prioridade:</label>
+    <select id="prioridade">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="dataInicio">Data de Início (MÊS/ANO):</label>
+    <input type="text" id="dataInicio" placeholder="ex: JAN/2024">
+  </div>
+
+  <div class="form-row">
+    <label for="descricao">Descrição:</label>
+    <textarea id="descricao" rows="3"></textarea>
+  </div>
+
+  <div class="form-row">
+    <label for="status">Status:</label>
+    <select id="status">
+      <option value="TRAVADO">TRAVADO</option>
+      <option value="ANDANDO">ANDANDO</option>
+      <option value="CHECAR">CHECAR</option>
+      <option value="EM PESQUISA">EM PESQUISA</option>
+      <option value="CONCLUÍDO">CONCLUÍDO</option>
+      <option value="CANCELADO">CANCELADO</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="acao">Ação:</label>
+    <input type="text" id="acao">
+  </div>
+
+  <div class="form-row">
+    <label for="data">Data (DD/MÊS/ANO):</label>
+    <input type="text" id="data" placeholder="ex: 15/05/2024">
+  </div>
+
+  <div id="message" class="hidden"></div> <button onclick="addDataToSheet()">Adicionar</button>
+  <button onclick="google.script.host.close()">Cancelar</button>
+
+  <script>
+    // Sugere a data (hoje + 7 dias) no campo "data"
+    window.onload = function() {
+      var today = new Date();
+      var nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+      var dd = String(nextWeek.getDate()).padStart(2, '0');
+      var mm = String(nextWeek.getMonth() + 1).padStart(2, '0');
+      var yyyy = nextWeek.getFullYear();
+      var formattedDate = dd + '/' + mm + '/' + yyyy;
+      document.getElementById('data').value = formattedDate;
+    };
+
+    function addDataToSheet() {
+      var data = {
+        prioridade: document.getElementById('prioridade').value,
+        dataInicio: document.getElementById('dataInicio').value,
+        descricao: document.getElementById('descricao').value,
+        status: document.getElementById('status').value,
+        acao: document.getElementById('acao').value,
+        data: document.getElementById('data').value
+      };
+
+      // Desativa o botão "Adicionar"
+      document.querySelector('button[onclick="addDataToSheet()"]').disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          // Exibe a mensagem de sucesso ou erro
+          var messageDiv = document.getElementById('message');
+          messageDiv.textContent = response;
+          messageDiv.className = ''; // Remove a classe "hidden"
+
+          if (response.startsWith('Erro')) {
+            messageDiv.style.color = 'red';
+          } else {
+            messageDiv.style.color = 'green';
+            // Limpa os campos do formulário
+            document.getElementById('prioridade').selectedIndex = 0;
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('status').selectedIndex = 0;
+            document.getElementById('acao').value = '';
+            document.getElementById('data').value = '';
+          }
+
+          // Reativa o botão "Adicionar"
+          document.querySelector('button[onclick="addDataToSheet()"]').disabled = false;
+        })
+        .withFailureHandler(function(error) {
+          // Exibe a mensagem de erro
+          var messageDiv = document.getElementById('message');
+          messageDiv.textContent = 'Erro: ' + error.message;
+          messageDiv.className = ''; // Remove a classe "hidden"
+          messageDiv.style.color = 'red';
+
+          // Reativa o botão "Adicionar"
+          document.querySelector('button[onclick="addDataToSheet()"]').disabled = false;
+        })
+        .insertData(data);
+    }
+  </script>
+</body>
+</html>
